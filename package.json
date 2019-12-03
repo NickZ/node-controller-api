@@ -7,7 +7,6 @@
 	],
 	"version": "0.1.0",
 	"main": "./dist/index.js",
-	"source": "./src/index.ts",
 	"typings": "./dist/index.d.ts",
 	"author": {
 		"name": "FrogTheFrog",
