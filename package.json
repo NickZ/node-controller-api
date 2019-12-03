@@ -6,8 +6,7 @@
 		"NickZ"
 	],
 	"version": "0.1.0",
-	"main": "./src/index.ts",
-	"module": "./src/index.js",
+	"main": "./dist/index.js",
 	"source": "./src/index.ts",
 	"author": {
 		"name": "FrogTheFrog",
@@ -18,10 +17,9 @@
 		"url": "https://github.com/NickZ/node-controller-api"
 	},
 	"scripts": {
-		"postinstall": "npm run prepare",
 		"prepare": "npm run build",
-		"build": "cross-env NODE_ENV=production tsc",
-		"build:debug": "cross-env NODE_ENV=development tsc"
+		"build": "rimraf dist && cross-env NODE_ENV=production tsc",
+		"build:debug": "rimraf dist && cross-env NODE_ENV=development tsc"
 	},
 	"dependencies": {
 		"microtime": "^3.0.0",
