@@ -1,6 +1,7 @@
 import * as long from "long";
 import { Observable } from "rxjs";
 import { MotionData, MotionDataWithTimestamp, TypedFilterData } from ".";
+import { GenericControllerDevice } from ".";
 
 /**
  * Dualshock battery status.
@@ -60,7 +61,7 @@ export interface DualshockMeta {
 /**
  * Dualshock report interface.
  */
-export interface DualshockReport extends MotionData {
+export interface DualshockReport extends MotionDataWithTimestamp {
     packetCounter: number;
     motionTimestamp: long;
     button: {
@@ -120,7 +121,7 @@ export interface DualshockData {
 /**
  * Abstract class wrapper for Dualshock devices.
  */
-export abstract class GenericDualshockController<R = object> {
+export abstract class GenericDualshockController extends GenericControllerDevice<DualshockReport> {
     /**
      * Returns observable for new dualshock data.
      */
@@ -129,7 +130,7 @@ export abstract class GenericDualshockController<R = object> {
     /**
      * Returns observable for new reports.
      */
-    public abstract readonly onReport: Observable<R>;
+    public abstract readonly onReport: Observable<DualshockReport>;
 
     /**
      * Returns observable for new motion data.
@@ -180,7 +181,7 @@ export abstract class GenericDualshockController<R = object> {
     /**
      * Returns actual device report or `null` if it cannot be retrieved.
      */
-    public abstract get report(): object | null;
+    public abstract get report(): DualshockReport | null;
 
     /**
      * Returns motion data or `null` if it cannot be retrieved.

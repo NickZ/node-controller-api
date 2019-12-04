@@ -2,20 +2,21 @@
 	"name": "node-controller-api",
 	"description": "App to add Steam Controller's motion support to Cemuhook",
 	"authors": [
-		"FrogTheFrog",
-		"NickZ"
+		"NickZ",
+		"FrogTheFrog"
 	],
 	"version": "0.1.0",
 	"main": "./dist/index.js",
 	"typings": "./dist/index.d.ts",
 	"author": {
-		"name": "FrogTheFrog",
-		"url": "https://github.com/FrogTheFrog",
-		"email": "warliukz@gmail.com"
+		"name": "NickZ",
+		"url": "https://github.com/NickZ",
+		"email": "nzatkovich@gmail.com"
 	},
 	"repository": {
 		"url": "https://github.com/NickZ/node-controller-api"
 	},
+	"license": "MIT",
 	"scripts": {
 		"prepare": "npm run build",
 		"build": "rimraf dist && cross-env NODE_ENV=production tsc",

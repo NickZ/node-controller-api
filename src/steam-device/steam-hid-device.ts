@@ -11,6 +11,7 @@ import {
     DualshockModel,
     DualshockReport,
     DualshockState,
+    GenericControllerDevice,
     GenericSteamDevice,
     SteamDeviceRatios,
     SteamDeviceReport,
@@ -82,6 +83,96 @@ const getInternals = privateData() as (self: SteamHidDevice, init: InternalData 
  */
 export class SteamHidDevice extends GenericSteamDevice {
     /**
+     * Stored item list.
+     */
+    private static itemList = new Map<string, Item>();
+
+    /**
+     * Stored device array.
+     */
+    private static deviceList: HidDevice[] | null = null;
+
+    /**
+     * Call count tracker to prevent running multiple trackers.
+     */
+    private static motoringCallCount: number = 0;
+
+
+    /**
+     * Current steam device report.
+     */
+    private currentReport = emptySteamDeviceReport();
+
+    /**
+     * Motion data.
+     */
+    private currentMotionData: MotionDataWithTimestamp =
+        {
+            accelerometer: {
+                range: [-SteamDeviceScales.Accelerometer, SteamDeviceScales.Accelerometer],
+                x: 0,
+                y: 0,
+                z: 0,
+            },
+            gyro: {
+                range: [-SteamDeviceScales.Gyro, SteamDeviceScales.Gyro],
+                x: 0,
+                y: 0,
+                z: 0,
+            },
+            timestamp: 0,
+        };
+
+    /**
+     * Last active connection timestamp.
+     */
+    private connectionTimestamp: number = 0;
+
+    /**
+     * Holds last packet number with valid motion data.
+     */
+    private lastValidSensorPacket: number = 0;
+
+    /**
+     * Current HID device.
+     */
+    public hidDevice: HID | null = null;
+
+    constructor() {
+        super();
+        getInternals(this, {
+            errorSubject: new Subject(),
+            motionDataSubject: new Subject(),
+            openCloseSubject: new Subject(),
+            reportSubject: new Subject(),
+        });
+    }
+
+    public get onReport() {
+        return getInternals(this).reportSubject.asObservable();
+    }
+
+    public get onMotionsData() {
+        return getInternals(this).motionDataSubject.asObservable();
+    }
+
+    public get onError() {
+        return getInternals(this).errorSubject.asObservable();
+    }
+
+    public get onOpenClose() {
+        return getInternals(this).openCloseSubject.asObservable();
+    }
+
+    public get report() {
+        return this.currentReport;
+    }
+
+    public get motionData() {
+        return this.currentMotionData;
+    }
+
+    /**
      * Returns list change event observable.
      */
     static get onListChange() {
@@ -139,20 +230,7 @@ export class SteamHidDevice extends GenericSteamDevice {
         return devices;
     }
 
-    /**
-     * Stored item list.
-     */
-    private static itemList = new Map<string, Item>();
 
-    /**
-     * Stored device array.
-     */
-    private static deviceList: HidDevice[] | null = null;
-
-    /**
-     * Call count tracker to prevent running multiple trackers.
-     */
-    private static motoringCallCount: number = 0;
 
     /**
      * Update device list.
@@ -296,80 +374,6 @@ export class SteamHidDevice extends GenericSteamDevice {
         }
     }
 
-    /**
-     * Current steam device report.
-     */
-    private currentReport = emptySteamDeviceReport();
-
-    /**
-     * Motion data.
-     */
-    private currentMotionData: MotionDataWithTimestamp =
-        {
-            accelerometer: {
-                range: [-SteamDeviceScales.Accelerometer, SteamDeviceScales.Accelerometer],
-                x: 0,
-                y: 0,
-                z: 0,
-            },
-            gyro: {
-                range: [-SteamDeviceScales.Gyro, SteamDeviceScales.Gyro],
-                x: 0,
-                y: 0,
-                z: 0,
-            },
-            timestamp: 0,
-        };
-
-    /**
-     * Last active connection timestamp.
-     */
-    private connectionTimestamp: number = 0;
-
-    /**
-     * Holds last packet number with valid motion data.
-     */
-    private lastValidSensorPacket: number = 0;
-
-    /**
-     * Current HID device.
-     */
-    private hidDevice: HID | null = null;
-
-    constructor() {
-        super();
-        getInternals(this, {
-            errorSubject: new Subject(),
-            motionDataSubject: new Subject(),
-            openCloseSubject: new Subject(),
-            reportSubject: new Subject(),
-        });
-    }
-
-    public get onReport() {
-        return getInternals(this).reportSubject.asObservable();
-    }
-
-    public get onMotionsData() {
-        return getInternals(this).motionDataSubject.asObservable();
-    }
-
-    public get onError() {
-        return getInternals(this).errorSubject.asObservable();
-    }
-
-    public get onOpenClose() {
-        return getInternals(this).openCloseSubject.asObservable();
-    }
-
-    public get report() {
-        return this.currentReport;
-    }
-
-    public get motionData() {
-        return this.currentMotionData;
-    }
-
     public open() {
         this.close();
 
@@ -431,6 +435,7 @@ export class SteamHidDevice extends GenericSteamDevice {
         // tslint:disable:object-literal-sort-keys
         return {
             packetCounter: report.packetCounter,
+            timestamp: report.timestamp,
             motionTimestamp: long.fromNumber(report.timestamp, true),
             button: {
                 R1: report.button.RS,

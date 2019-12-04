@@ -1,8 +1,10 @@
 import { Subject, Subscription } from "rxjs";
 import { privateData } from "../lib";
 import { MotionDataWithTimestamp } from "../models";
-import { GenericSteamDevice, SteamDeviceReport } from "../models";
+import { SteamDeviceReport } from "../models";
 import { SteamHidDevice } from "./steam-hid-device";
+import { GenericSteamDevice, GenericControllerDevice } from "../models";
+import { DualshockMeta, DualshockReport } from "../models";
 
 /**
  * Internal class data interface.

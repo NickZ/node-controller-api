@@ -1,1 +1,1 @@
-export * from "./dualshock-like-controller";
+export * from "./generic-controller";
