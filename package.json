@@ -44,7 +44,7 @@
 		"fs-extra": "^7.0.1",
 		"hack-font": "^3.3.0",
 		"hammerjs": "^2.0.8",
-		"node-sass": "^4.11.0",
+		"node-sass": "^4.13.1",
 		"postcss-loader": "^3.0.0",
 		"random-js": "^1.0.8",
 		"random-mac": "0.0.5",
