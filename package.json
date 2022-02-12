@@ -35,7 +35,7 @@
 		"@types/node-hid": "^0.7.0",
 		"@types/webpack-env": "^1.13.7",
 		"@types/long": "^4.0.0",
-		"ajv": "^6.8.1",
+		"ajv": "^6.12.3",
 		"autoprefixer": "^9.4.7",
 		"core-js": "^2.6.3",
 		"crc": "^3.8.0",
